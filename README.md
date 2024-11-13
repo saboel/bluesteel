@@ -1,0 +1,1 @@
+This is just a sample of grabbing all NFL team IDs, then grabbing the player Ids for that team and then using Pandas to represent all active players in table format. Originally I was storing all of this in a hashmap, but wanted to perform data manipulation techniques like joins, merging, etc on the data. 
