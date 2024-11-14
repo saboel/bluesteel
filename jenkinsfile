@@ -1,5 +1,5 @@
 pipeline {
-    agent{label 'blue steel'}
+    agent{label 'blue-steel'}
 
     
     environment {
