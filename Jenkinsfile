@@ -20,7 +20,7 @@ pipeline {
                 script {
                     // Set up a virtual environment to isolate dependencies
                     bat 'py -m venv %PYTHON_VENV%'
-                    bat '%PYTHON_VENV%/bin/pip install -r requirements.txt'  // Install dependencies
+                    bat '%PYTHON_VENV%\\Scripts\\pip install -r requirements.txt'  // Install dependencies
                 }
             }
         }
