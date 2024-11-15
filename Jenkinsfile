@@ -20,13 +20,13 @@ pipeline {
                     // Use credentials from Jenkins' credentials store
                     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
 
-                         def checkDetails = new ChecksDetailsBuilder()
+                        checkDetails details = new ChecksDetailsBuilder()
                                 .withName("Jenkins CI")
                                 .withStatus(ChecksStatus.IN_PROGRESS)
                                 .withConclusion(ChecksConclusion.NEUTRAL)  // Mark as neutral until we know the result
                                 .withDetailsURL(DisplayURLProvider.get().getRunURL(run))  // Link to the Jenkins build
                                 .withCompletedAt(LocalDateTime.now(ZoneOffset.UTC))
-                                .build()
+                                .build();
                         // Start the GitHub Check (Tests)
                          githubChecks(
                             credentialsId: 'github-token',  // Reference the stored GitHub credentials
