@@ -18,12 +18,12 @@ pipeline {
             steps {
                 script {
                     // Use credentials from Jenkins' credentials store
-                    withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                         // Start the GitHub Check (Tests)
                         def check = githubChecks(
-                            credentialsId: 'github',  // Reference the stored GitHub credentials
-                            repoOwner: 'your-org',
-                            repository: 'your-repo',
+                            credentialsId: 'github-token',  // Reference the stored GitHub credentials
+                            repoOwner: 'saboel',
+                            repository: 'https://github.com/saboel/bluesteel.git',
                             commitSha: env.GIT_COMMIT,
                             status: 'in_progress', // 'in_progress' status when tests are running
                             context: 'Jenkins Tests',
