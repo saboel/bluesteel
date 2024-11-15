@@ -1,6 +1,5 @@
 pipeline {
     agent{label 'blue-steel'}
-
     
     environment {
         PYTHON_VENV = '.venv'
@@ -20,22 +19,18 @@ pipeline {
             steps {
                 script {
                     // Set up a virtual environment to isolate dependencies
-                    sh 'python -m venv ${PYTHON_VENV}'
-                    sh '${PYTHON_VENV}/bin/pip install -r requirements.txt'  // Install dependencies
+                    bat 'python -m venv ${PYTHON_VENV}'
+                    bat '${PYTHON_VENV}/bin/pip install -r requirements.txt'  // Install dependencies
                 }
             }
         }
 
-
-
-
     }
-
 
       post {
         always {
             // Clean up after tests
-            sh 'rm -rf ${PYTHON_VENV}'
+            bat 'rm -rf ${PYTHON_VENV}'
         }
     }
 }
