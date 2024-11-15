@@ -34,6 +34,7 @@ pipeline {
       post {
         always {
             // Clean up after tests
+            onlyIfSuccessful: true
             bat 'rmdir /s /q %PYTHON_VENV%'
         }
     }
