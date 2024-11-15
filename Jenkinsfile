@@ -26,6 +26,7 @@ pipeline {
         }
 
         //add unit tests stage based on certain test cases that need to pass on code checks: like? 
+        //also add benchmark tests 
 
     }
 
