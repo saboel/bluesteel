@@ -19,16 +19,27 @@ pipeline {
                 script {
                     // Use credentials from Jenkins' credentials store
                     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+
+                         def checkDetails = new ChecksDetailsBuilder()
+                                .withName("Jenkins CI")
+                                .withStatus(ChecksStatus.IN_PROGRESS)
+                                .withConclusion(ChecksConclusion.NEUTRAL)  // Mark as neutral until we know the result
+                                .withDetailsURL(DisplayURLProvider.get().getRunURL(run))  // Link to the Jenkins build
+                                .withCompletedAt(LocalDateTime.now(ZoneOffset.UTC))
+                                .build()
                         // Start the GitHub Check (Tests)
-                        def check = githubChecks(
+                         githubChecks(
                             credentialsId: 'github-token',  // Reference the stored GitHub credentials
                             repoOwner: 'saboel',
                             repository: 'bluesteel',
                             commitSha: env.GIT_COMMIT,
-                            status: 'in_progress', // 'in_progress' status when tests are running
-                            context: 'Jenkins Tests',
-                            description: 'Running tests'
+                            checkName: "Jenkins CI",
+                            status: ChecksStatus.IN_PROGRESS,  // Mark the check as in-progress                            context: 'Jenkins Tests',
+                            conclusion: ChecksConclusion.NEUTRAL,
+                            detailsUrl: DisplayURLProvider.get().getRunURL(run),
+                            completedAt: LocalDateTime.now(ZoneOffset.UTC)
                         )
+                         def testResult = sh(script: "pytest tests", returnStatus: true)
                     }
                 }
             }
