@@ -23,7 +23,7 @@ pipeline {
                         def check = githubChecks(
                             credentialsId: 'github-token',  // Reference the stored GitHub credentials
                             repoOwner: 'saboel',
-                            repository: 'https://github.com/saboel/bluesteel.git',
+                            repository: 'bluesteel',
                             commitSha: env.GIT_COMMIT,
                             status: 'in_progress', // 'in_progress' status when tests are running
                             context: 'Jenkins Tests',
