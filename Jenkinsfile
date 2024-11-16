@@ -52,7 +52,7 @@ pipeline {
                     -H "Content-Type: application/json" ^
                     -H "Authorization: token %GITHUB_TOKEN%" ^
                     -d "{\"state\": \"success\", \"context\": \"continuous-integration/jenkins\", \"description\": \"Jenkins\", \"target_url\": \"${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console\"}" ^
-                    "https://api.github.com/repos/saboel/bluesteel/statuses/%commitSha%"
+                    "https://api.github.com/repos/saboel/bluesteel/statuses/${commitSha}"
                 """
             }
         }
@@ -68,7 +68,7 @@ pipeline {
                     -H "Content-Type: application/json" ^
                     -H "Authorization: token %GITHUB_TOKEN%" ^
                     -d "{\"state\": \"failure\", \"context\": \"continuous-integration/jenkins\", \"description\": \"Jenkins\", \"target_url\": \"${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console\"}" ^
-                    "https://api.github.com/repos/saboel/bluesteel/statuses/%commitSha%"
+                    "https://api.github.com/repos/saboel/bluesteel/statuses/${commitSha}"
                 """
             }
         }
