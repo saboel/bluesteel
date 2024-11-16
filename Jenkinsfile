@@ -1,71 +1,73 @@
 pipeline {
-    agent{label 'blue-steel'}
-    
+    agent { label 'blue-steel' }
+
     environment {
         PYTHON_VENV = '.venv'
     }
 
-
-    stages{
-
-          stage('Checkout') {
+    stages {
+        stage('Checkout') {
             steps {
-                checkout scm  // Checkout your code from the repository
+                checkout scm
             }
         }
 
-          stage('Test') {
-            steps {
-                script {
-                    // Use credentials from Jenkins' credentials store
-                    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-
-                        checkDetails details = new ChecksDetailsBuilder()
-                                .withName("Jenkins CI")
-                                .withStatus(ChecksStatus.IN_PROGRESS)
-                                .withConclusion(ChecksConclusion.NEUTRAL)  // Mark as neutral until we know the result
-                                .withDetailsURL(DisplayURLProvider.get().getRunURL(run))  // Link to the Jenkins build
-                                .withCompletedAt(LocalDateTime.now(ZoneOffset.UTC))
-                                .build();
-                        // Start the GitHub Check (Tests)
-                         githubChecks(
-                            credentialsId: 'github-token',  // Reference the stored GitHub credentials
-                            repoOwner: 'saboel',
-                            repository: 'bluesteel',
-                            commitSha: env.GIT_COMMIT,
-                            checkName: "Jenkins CI",
-                            status: ChecksStatus.IN_PROGRESS,  // Mark the check as in-progress                            context: 'Jenkins Tests',
-                            conclusion: ChecksConclusion.NEUTRAL,
-                            detailsUrl: DisplayURLProvider.get().getRunURL(run),
-                            completedAt: LocalDateTime.now(ZoneOffset.UTC)
-                        )
-                         def testResult = sh(script: "pytest tests", returnStatus: true)
-                    }
-                }
-            }
-          }
-
-        
         stage('Set up Python') {
             steps {
                 script {
-                    // Set up a virtual environment to isolate dependencies
                     bat 'py -m venv %PYTHON_VENV%'
-                    bat '%PYTHON_VENV%\\Scripts\\pip install -r requirements.txt'  // Install dependencies
+                    bat '%PYTHON_VENV%\\Scripts\\pip install -r requirements.txt'
                 }
             }
         }
 
-        //add unit tests stage based on certain test cases that need to pass on code checks: like? 
-        //also add benchmark tests 
-        //what tests?
+        stage('Test') {
+            steps {
+                script {
+                    // Run tests (adjust based on your testing framework)
+                    def testResult = bat(script: 'pytest tests', returnStatus: true)
 
+                    // Check if tests passed (exit status 0)
+                    if (testResult == 0) {
+                        currentBuild.result = 'SUCCESS'
+                    } else {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
     }
 
-      post {
-        always {
-            // Clean up after tests
-            bat 'rmdir /s /q %PYTHON_VENV%'
+    post {
+        success {
+            // Send success status to GitHub after a successful build
+            script {
+                def commitSha = env.GIT_COMMIT
+                def githubToken = credentials('github-token')  // Use the token from Jenkins credentials
+
+                // Curl command in Windows, ensure correct escaping
+                bat """
+                    curl -X POST ^
+                    -H "Content-Type: application/json" ^
+                    -d "{\"state\": \"success\", \"context\": \"continuous-integration/jenkins\", \"description\": \"Jenkins\", \"target_url\": \"${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console\"}" ^
+                    "https://api.github.com/repos/saboel/bluesteel/statuses/${commitSha}?access_token=${githubToken}"
+                """
+            }
+        }
+
+        failure {
+            // Send failure status to GitHub if the build fails
+            script {
+                def commitSha = env.GIT_COMMIT
+                def githubToken = credentials('github-token')
+
+                bat """
+                    curl -X POST ^
+                    -H "Content-Type: application/json" ^
+                    -d "{\"state\": \"failure\", \"context\": \"continuous-integration/jenkins\", \"description\": \"Jenkins\", \"target_url\": \"${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console\"}" ^
+                    "https://api.github.com/repos/saboel/bluesteel/statuses/${commitSha}?access_token=${githubToken}"
+                """
+            }
         }
     }
 }
