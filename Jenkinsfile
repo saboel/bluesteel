@@ -22,11 +22,13 @@ pipeline {
             }
         }
 
+     
+
         stage('Test') {
             steps {
                 script {
                     // Run tests (adjust based on your testing framework)
-                    def testResult = bat(script: 'pytest tests', returnStatus: true)
+                    def testResult = bat(script: 'py main.py', returnStatus: true)
 
                     // Check if tests passed (exit status 0)
                     if (testResult == 0) {
@@ -73,3 +75,11 @@ pipeline {
         }
     }
 }
+
+
+
+// Make the code more meaningful: Use repo names of things you enjoy: movies, funny clips, etc. 
+//This gives the name more depth and meaning but also ensure it sticks to what you are trying to do 
+//A new love for Dream baby dream 
+
+
