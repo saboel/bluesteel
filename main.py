@@ -91,7 +91,8 @@ def main ():
         filtered_df = merged_df[filtered_column]
         sorted_df = filtered_df.sort_values(by='date', ascending=False)
 
-        print(sorted_df)
+        sorted_df.to_json('output.json',orient='records' ,lines=True)
+        #print(sorted_df)
 
 
   
