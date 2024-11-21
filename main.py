@@ -61,9 +61,9 @@ def main ():
     
     ##print(team_map)
     ##print(team_map.get('Texans'))
-    team_name = 'Texans'  # Replace with the desired team name
+    team_name = 'Dolphins'  # Replace with the desired team name
     team_id = team_map.get(team_name)
-    print(team_id)
+    ##print(team_id)
     status_code, roster = fetch_team_roster(team_id)
 
 

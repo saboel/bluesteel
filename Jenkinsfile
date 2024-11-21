@@ -7,6 +7,26 @@ pipeline {
     }
 
     stages {
+
+        stage('Notify GitHub - In Progress') {
+            steps {
+                script {
+                    // Trigger GitHub Status API to set status as "pending" (in-progress)
+                    def commitSha = bat(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    githubCommitStatus(
+                        context: 'jenkins/build', 
+                        status: 'pending', 
+                        targetUrl: '${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console', 
+                        description: 'Build is in progress', 
+                        sha: commitSha
+                    )
+                }
+            }
+        }
+
+        
+
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -28,6 +48,7 @@ pipeline {
             steps {
                 script {
                     // Run tests (adjust based on your testing framework)
+                    echo "Running build ${env.BUILD_ID}"
                     def testResult = bat(script: 'py main.py', returnStatus: true)
 
                     // Check if tests passed (exit status 0)
@@ -42,6 +63,7 @@ pipeline {
     }
 
     post {
+
         success {
             // Send success status to GitHub after a successful build
             script {
@@ -81,5 +103,5 @@ pipeline {
 // Make the code more meaningful: Use repo names of things you enjoy: movies, funny clips, etc. 
 //This gives the name more depth and meaning but also ensure it sticks to what you are trying to do 
 //A new love for Dream baby dream 
-
+//
 
