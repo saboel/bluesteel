@@ -59,6 +59,13 @@ pipeline {
                 }
             }
         }
+
+        stage ('Archive data') {
+             steps {
+                // Archive the data.json file as a build artifact
+                archiveArtifacts artifacts: 'output.json', allowEmptyArchive: true
+            }
+        }
     }
 
     post {
@@ -95,9 +102,6 @@ pipeline {
             }
         }
 
-          always {
-            archiveArtifacts artifacts: 'output.json', onlyIfSuccessful: true
-        }
     }
 }
 
