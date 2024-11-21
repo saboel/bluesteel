@@ -12,14 +12,15 @@ pipeline {
             steps {
                 script {
                     // Trigger GitHub Status API to set status as "pending" (in-progress)
-                    def commitSha = bat(script: 'git rev-parse HEAD', returnStdout: true).trim()
-                    githubCommitStatus(
-                        context: 'jenkins/build', 
-                        status: 'pending', 
-                        targetUrl: '${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console', 
-                        description: 'Build is in progress', 
-                        sha: commitSha
-                    )
+                    def commitSha = env.GIT_COMMIT
+                    def targetUrl = "${env.JENKINS_URL}/job/${JOB_NAME}/${BUILD_NUMBER}/console"
+                        bat """
+                            curl -X POST ^
+                            -H "Content-Type: application/json" ^
+                            -H "Authorization: token %GITHUB_TOKEN%" ^
+                            -d "{\\"state\\": \\"pending\\", \\"context\\": \\"continuous-integration/jenkins\\", \\"description\\": \\"Jenkins is in pending state\\", \\"target_url\\": \\"${targetUrl}\\"}" ^
+                            "https://api.github.com/repos/saboel/bluesteel/statuses/${commitSha}"
+                        """
                 }
             }
         }
