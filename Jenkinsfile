@@ -94,6 +94,10 @@ pipeline {
             """
             }
         }
+
+          always {
+            archiveArtifacts artifacts: 'output.json', onlyIfSuccessful: true
+        }
     }
 }
 
