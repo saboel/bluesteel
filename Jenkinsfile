@@ -63,7 +63,7 @@ pipeline {
         stage ('Archive data') {
              steps {
                 // Archive the data.json file as a build artifact
-                archiveArtifacts artifacts: 'output.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: '*.json', allowEmptyArchive: true
             }
         }
     }
