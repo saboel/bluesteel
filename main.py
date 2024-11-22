@@ -90,8 +90,8 @@ def main ():
         # Create a new DataFrame with only the selected columns
         filtered_df = merged_df[filtered_column]
         sorted_df = filtered_df.sort_values(by='date', ascending=False)
-
-        sorted_df.to_json('output.json',orient='records' ,lines=True)
+        file_name = f"{team_name}.json"
+        sorted_df.to_json(file_name, orient='records' ,lines=True)
         #print(sorted_df)
 
 
